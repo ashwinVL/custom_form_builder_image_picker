@@ -38,7 +38,8 @@ class ImageSourceBottomSheet extends StatefulWidget {
   final Widget? galleryLabel;
   final EdgeInsets? bottomSheetPadding;
   final bool preventPop;
-
+  final void Function()? afterImageSelected;
+  final bool skipSelectOption;
   final Widget Function(
           FutureVoidCallBack cameraPicker, FutureVoidCallBack galleryPicker)?
       optionsBuilder;
@@ -52,6 +53,8 @@ class ImageSourceBottomSheet extends StatefulWidget {
     this.imageQuality,
     this.preferredCameraDevice = CameraDevice.rear,
     required this.onImageSelected,
+    this.afterImageSelected,
+    this.skipSelectOption = false,
     this.cameraIcon,
     this.galleryIcon,
     this.cameraLabel,
@@ -110,31 +113,36 @@ class ImageSourceBottomSheetState extends State<ImageSourceBottomSheet> {
         () => _onPickImage(ImageSource.gallery),
       );
     }
-    Widget res = Container(
-      padding: widget.bottomSheetPadding,
-      child: Wrap(
-        children: <Widget>[
-          if (widget.availableImageSources.contains(ImageSourceOption.camera))
-            ListTile(
-              leading: widget.cameraIcon,
-              title: widget.cameraLabel,
-              onTap: () => _onPickImage(ImageSource.camera),
-            ),
-          if (widget.availableImageSources.contains(ImageSourceOption.gallery))
-            ListTile(
-              leading: widget.galleryIcon,
-              title: widget.galleryLabel,
-              onTap: () => _onPickImage(ImageSource.gallery),
-            ),
-        ],
-      ),
-    );
+    Widget res = const SizedBox.shrink();
+    if (!widget.skipSelectOption) {
+      res = Container(
+        padding: widget.bottomSheetPadding,
+        child: Wrap(
+          children: <Widget>[
+            if (widget.availableImageSources.contains(ImageSourceOption.camera))
+              ListTile(
+                leading: widget.cameraIcon,
+                title: widget.cameraLabel,
+                onTap: () => _onPickImage(ImageSource.camera),
+              ),
+            if (widget.availableImageSources
+                .contains(ImageSourceOption.gallery))
+              ListTile(
+                leading: widget.galleryIcon,
+                title: widget.galleryLabel,
+                onTap: () => _onPickImage(ImageSource.gallery),
+              ),
+          ],
+        ),
+      );
+    }
     if (widget.preventPop) {
       res = WillPopScope(
         onWillPop: () async => !_isPickingImage,
         child: res,
       );
     }
+    _onPickImage(ImageSource.camera);
     return res;
   }
 }

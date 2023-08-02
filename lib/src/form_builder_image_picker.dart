@@ -113,7 +113,7 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
       optionsBuilder;
 
   final WidgetBuilder? loadingWidget;
-
+  final Function()? afterImageSelected;
   FormBuilderImagePicker({
     super.key,
     required super.name,
@@ -155,6 +155,7 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
     this.placeholderImage,
     this.onTap,
     this.optionsBuilder,
+    this.afterImageSelected,
     this.availableImageSources = const [
       ImageSourceOption.camera,
       ImageSourceOption.gallery,
@@ -215,10 +216,12 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
                       galleryLabel: galleryLabel,
                       optionsBuilder: optionsBuilder,
                       availableImageSources: availableImageSources,
+                      afterImageSelected:afterImageSelected,
                       onImageSelected: (image) {
                         state.focus();
                         field.didChange([...value, ...image]);
                         Navigator.pop(state.context);
+                        afterImageSelected;
                       },
                     );
                     onTap != null
