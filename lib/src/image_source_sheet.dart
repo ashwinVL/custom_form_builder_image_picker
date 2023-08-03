@@ -135,6 +135,11 @@ class ImageSourceBottomSheetState extends State<ImageSourceBottomSheet> {
           ],
         ),
       );
+    }else{
+      res = WillPopScope(
+        onWillPop: () async => true,
+        child: res,
+      );
     }
     if (widget.preventPop) {
       res = WillPopScope(
