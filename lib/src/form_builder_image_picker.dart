@@ -174,6 +174,40 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
 
             /// how many items to display in the list view (including upload btn)
             final itemCount = value.length + (canUpload ? 1 : 0);
+            onImageSelected(image) {
+              field.didChange([...value, ...image]);
+
+              afterImageSelected?.call();
+            }
+
+            skipSelection(source) async {
+              final imagePicker = ImagePicker();
+              try {
+                if (source == ImageSource.camera) {
+                  final pickedFile = await imagePicker.pickImage(
+                    source: source,
+                    preferredCameraDevice: preferredCameraDevice,
+                    maxHeight: maxHeight,
+                    maxWidth: maxWidth,
+                    imageQuality: imageQuality,
+                  );
+                  if (pickedFile != null) {
+                    onImageSelected([pickedFile]);
+                  }
+                } else {
+                  final pickedFiles = await imagePicker.pickMultiImage(
+                    maxHeight: maxHeight,
+                    maxWidth: maxWidth,
+                    imageQuality: imageQuality,
+                  );
+                  if (pickedFiles.isNotEmpty) {
+                    onImageSelected(pickedFiles);
+                  }
+                }
+              } catch (e) {
+                rethrow;
+              }
+            }
 
             Widget addButtonBuilder(
               BuildContext context,
@@ -221,26 +255,24 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
                       afterImageSelected: afterImageSelected,
                       skipSelectOption: skipSelectOption,
                       onImageSelected: (image) {
-                        if (!skipSelectOption) {
-                          state.focus();
-                        }
+                        state.focus();
 
                         field.didChange([...value, ...image]);
-                        if (!skipSelectOption) {
-                          Navigator.pop(state.context);
-                        }
+                        Navigator.pop(state.context);
 
                         afterImageSelected?.call();
                       },
                     );
                     onTap != null
                         ? onTap(imageSourceSheet)
-                        : await showModalBottomSheet<void>(
-                            context: state.context,
-                            builder: (_) {
-                              return imageSourceSheet;
-                            },
-                          );
+                        : skipSelectOption
+                            ? skipSelection(ImageSourceOption.camera)
+                            : await showModalBottomSheet<void>(
+                                context: state.context,
+                                builder: (_) {
+                                  return imageSourceSheet;
+                                },
+                              );
                   },
                 );
 
