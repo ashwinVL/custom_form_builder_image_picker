@@ -218,12 +218,18 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
                       galleryLabel: galleryLabel,
                       optionsBuilder: optionsBuilder,
                       availableImageSources: availableImageSources,
-                      afterImageSelected:afterImageSelected,
+                      afterImageSelected: afterImageSelected,
                       skipSelectOption: skipSelectOption,
                       onImageSelected: (image) {
-                        state.focus();
+                        if (!skipSelectOption) {
+                          state.focus();
+                        }
+
                         field.didChange([...value, ...image]);
-                        Navigator.pop(state.context);
+                        if (!skipSelectOption) {
+                          Navigator.pop(state.context);
+                        }
+
                         afterImageSelected?.call();
                       },
                     );
