@@ -266,7 +266,7 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
                     onTap != null
                         ? onTap(imageSourceSheet)
                         : skipSelectOption
-                            ? skipSelection(ImageSourceOption.camera)
+                            ? await skipSelection(ImageSourceOption.camera)
                             : await showModalBottomSheet<void>(
                                 context: state.context,
                                 builder: (_) {
