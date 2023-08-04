@@ -175,7 +175,10 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
             /// how many items to display in the list view (including upload btn)
             final itemCount = value.length + (canUpload ? 1 : 0);
             onImageSelected(image) {
+              state.focus();
+
               field.didChange([...value, ...image]);
+              Navigator.pop(state.context);
 
               afterImageSelected?.call();
             }
