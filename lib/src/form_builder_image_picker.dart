@@ -223,7 +223,7 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
                       onImageSelected: (image) {
                         state.focus();
                         field.didChange([...value, ...image]);
-                        afterImageSelected;
+                        afterImageSelected?.call();
                         Navigator.pop(state.context);
                         
                       },
