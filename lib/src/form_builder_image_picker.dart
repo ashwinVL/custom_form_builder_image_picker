@@ -174,12 +174,15 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
 
             /// how many items to display in the list view (including upload btn)
             final itemCount = value.length + (canUpload ? 1 : 0);
+
+            // onImageSelected method copied from function passed into bottomsheet onImageSelected parameter
             onImageSelected(image) {
               field.didChange([...value, ...image]);
 
               afterImageSelected?.call();
             }
 
+            // image picker method extracted and slightly edited from image_source_sheet file
             skipSelection(source) async {
               final imagePicker = ImagePicker();
               try {
@@ -252,20 +255,17 @@ class FormBuilderImagePicker extends FormBuilderFieldDecoration<List<dynamic>> {
                       galleryLabel: galleryLabel,
                       optionsBuilder: optionsBuilder,
                       availableImageSources: availableImageSources,
-                      afterImageSelected: afterImageSelected,
-                      skipSelectOption: skipSelectOption,
                       onImageSelected: (image) {
                         state.focus();
-
                         field.didChange([...value, ...image]);
                         Navigator.pop(state.context);
-
-                        afterImageSelected?.call();
+                        afterImageSelected
+                            ?.call(); // calls afterImageSelected Method
                       },
                     );
                     onTap != null
                         ? onTap(imageSourceSheet)
-                        : skipSelectOption
+                        : skipSelectOption // if skipSelection true, go straight to camera
                             ? await skipSelection(ImageSource.camera)
                             : await showModalBottomSheet<void>(
                                 context: state.context,
